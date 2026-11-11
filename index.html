@@ -108,6 +108,7 @@ section{display:flex;flex-direction:column;gap:18px}
 .strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.strip img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;display:block}
 .contact{border-top:3px double var(--line);padding-top:28px}
 .phone{font-size:1.6rem;font-weight:500;color:var(--green);user-select:all}
+.callrow{display:flex;gap:10px;flex-wrap:wrap}.callrow .btn{text-decoration:none;display:inline-block}
 /* cut cards */
 .shop{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;min-width:0}
@@ -198,9 +199,10 @@ section{display:flex;flex-direction:column;gap:18px}
 
   <section id="contact" class="contact">
     <span class="eyebrow">How to buy</span>
-    <h2>Text or call Joseph</h2>
+    <h2>Text or call Joey</h2>
     <p class="lede">Tell me which cuts you want, or if you'd like an eighth, quarter, or half. I'll let you know what's available and set up a pickup.</p>
-    <p class="phone num" id="phone" hidden></p>
+    <p class="phone num">(412) 667-1980</p>
+    <div class="callrow"><a class="btn" href="sms:+14126671980">Text Joey</a><a class="btn ghost" href="tel:+14126671980">Call Joey</a></div>
   </section>
 </div>
 
@@ -226,7 +228,6 @@ document.getElementById("gateForm").addEventListener("submit",async e=>{
 });
 
 /* ======= EDIT THESE NUMBERS ======= */
-const PHONE = "";                  // e.g. "(304) 555-0123" — shown in the "Text or call" section
 const QUARTER_PRICE = 1000;        // flat price for a quarter (eighth = half this, half = double)
 const INVENTORY = [                // individual cuts for sale (store = typical grocery $/lb)
   {cut:"Delmonico steak",  aka:"Ribeye",            img:"img/delmonico.jpg",        price:13.00, store:14.00},
@@ -296,7 +297,6 @@ function renderShare(){
 document.querySelectorAll(".seg button").forEach(b=>b.addEventListener("click",()=>{
   scale=+b.dataset.s; document.querySelectorAll(".seg button").forEach(x=>x.setAttribute("aria-pressed",x===b)); renderShare();
 }));
-if(PHONE){$("phone").textContent=PHONE;$("phone").hidden=false;}
 renderInv(); renderShare();
 </script>
 
