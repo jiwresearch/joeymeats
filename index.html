@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<style>html{color-scheme:light}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Joey Meats</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@600;700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: one column, butcher-counter feel — a price-board hero, a quarter-cow "what's in the box" grid, then a store-vs-farm ledger */
+:root{
+  --bg:#F5F6F1; --surface:#FFFFFF; --ink:#1D2620; --muted:#5E6A61; --line:#DCE0D6;
+  --green:#2E5B3B; --green-soft:#E3ECE3; --kraft:#B08A55; --save:#A8372B; --save-soft:#F6E4E1;
+  --display:"Zilla Slab",Rockwell,"Roboto Slab",Georgia,serif;
+  --body:"Work Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#121713; --surface:#1A211C; --ink:#E8ECE6; --muted:#9DA89F; --line:#2C362F;
+  --green:#7FB98E; --green-soft:#1F2E23; --kraft:#CFA96F; --save:#E77B6D; --save-soft:#33201D; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121713; --surface:#1A211C; --ink:#E8ECE6; --muted:#9DA89F; --line:#2C362F;
+  --green:#7FB98E; --green-soft:#1F2E23; --kraft:#CFA96F; --save:#E77B6D; --save-soft:#33201D; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:860px;margin:0 auto;padding-block:32px 64px;display:flex;flex-direction:column;gap:56px}
+h1,h2,h3{font-family:var(--display);line-height:1.1;text-wrap:balance;margin:0}
+h1{font-size:clamp(2.3rem,7vw,3.6rem)} h2{font-size:clamp(1.6rem,4.5vw,2.1rem)} h3{font-size:1.15rem}
+p{margin:0;max-width:62ch}
+.eyebrow{font:500 .75rem var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--kraft)}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+section{display:flex;flex-direction:column;gap:18px}
+.lede{color:var(--muted);font-size:1.05rem}
+
+/* hero */
+.hero{display:flex;flex-direction:column;gap:14px;border-bottom:3px double var(--line);padding-bottom:28px}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{font-size:.82rem;padding:4px 10px;border:1px solid var(--line);border-radius:99px;color:var(--muted);background:var(--surface)}
+
+/* inventory */
+.inv{width:100%;border-collapse:collapse}
+.tablebox{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+.inv th,.inv td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+.inv th{font:500 .72rem var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.inv tr:last-child td{border-bottom:0}
+.inv td.r,.inv th.r{text-align:right}
+.inv .cut{font-weight:600;white-space:normal}
+.qty{display:inline-flex;align-items:center;gap:6px}
+.qty button{width:30px;height:30px;border-radius:6px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:1rem;cursor:pointer}
+.qty button:focus-visible,.btn:focus-visible,.seg button:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+.qty span{min-width:1.5ch;text-align:center}
+
+/* quarter cow */
+.box{background:var(--green);color:#F3F6F1;border-radius:14px;padding:28px max(20px,4%);display:flex;flex-direction:column;gap:22px}
+.box .eyebrow{color:#D9C29A}
+.box p{color:#D7E2D8}
+.seg{display:inline-flex;border:1px solid rgba(255,255,255,.35);border-radius:8px;overflow:hidden;align-self:flex-start}
+.seg button{background:transparent;color:#F3F6F1;border:0;padding:8px 16px;font:600 .9rem var(--body);cursor:pointer}
+.seg button[aria-pressed="true"]{background:#F3F6F1;color:#2E5B3B}
+.big{display:flex;flex-wrap:wrap;gap:28px}
+.big div{display:flex;flex-direction:column}
+.big .n{font:700 2.6rem/1 var(--display)}
+.big .l{font-size:.85rem;color:#C9D7CB}
+.cuts{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.cutcard{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.cutcard .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.cutcard .w{font:500 .85rem var(--mono);color:#D9C29A}
+.dots{display:flex;flex-wrap:wrap;gap:4px}
+.dots i{width:14px;height:10px;border-radius:50% 50% 45% 45%;background:#E7D3B0;display:block}
+.dots i.lb{width:10px;height:10px;border-radius:2px;background:rgba(231,211,176,.55)}
+.cutcard small{color:#C9D7CB;font-size:.8rem}
+.meals{font-size:.95rem;color:#E9F0EA;border-top:1px solid rgba(255,255,255,.18);padding-top:16px}
+
+/* ledger */
+.ledger{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:22px;display:flex;flex-direction:column;gap:18px}
+.bars{display:flex;flex-direction:column;gap:12px}
+.bar{display:grid;grid-template-columns:120px 1fr auto;align-items:center;gap:12px}
+.bar .track{height:30px;background:var(--bg);border-radius:6px;overflow:hidden}
+.bar .fill{height:100%;border-radius:6px}
+.fill.store{background:var(--muted)} .fill.farm{background:var(--green)}
+.saving{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;background:var(--save-soft);color:var(--save);border-radius:8px;padding:14px 16px}
+.saving strong{font:700 1.8rem var(--display)}
+.cmp th:nth-child(n+2),.cmp td:nth-child(n+2){text-align:right}
+.cmp td.win{color:var(--save);font-weight:600}
+.src{font-size:.8rem;color:var(--muted)}
+.src a{color:var(--green)}
+
+/* order */
+.btn{background:var(--green);color:var(--bg);border:0;border-radius:8px;padding:10px 16px;font:600 .95rem var(--body);cursor:pointer}
+.btn.ghost{background:transparent;color:var(--green);border:1px solid var(--green)}
+#msg{width:100%;font:14px/1.5 var(--mono);padding:10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);min-height:110px}
+.note{font-size:.85rem;color:var(--muted)}
+@media (max-width:520px){.bar{grid-template-columns:80px 1fr auto}.inv th,.inv td{padding:10px}}
+@media (prefers-reduced-motion:no-preference){.fill{transition:width .5s ease}}
+
+/* passcode gate */
+.gate{min-height:70vh;display:flex;align-items:center;justify-content:center;padding-block:40px}
+.gate form{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:28px 24px;max-width:380px;width:100%;display:flex;flex-direction:column;gap:14px}
+.gate input{font:16px var(--mono);padding:12px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);letter-spacing:.08em}
+.gate input:focus-visible{outline:2px solid var(--green);outline-offset:1px}
+.gate .err{color:var(--save);font-size:.88rem;min-height:1.2em}
+
+.strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.strip img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;display:block}
+.contact{border-top:3px double var(--line);padding-top:28px}
+.phone{font-size:1.6rem;font-weight:500;color:var(--green);user-select:all}
+/* cut cards */
+.shop{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.card img{display:block;width:100%;aspect-ratio:1;object-fit:cover;max-width:100%;background:var(--line)}
+.card .ph{aspect-ratio:1;display:flex;align-items:center;justify-content:center;background:var(--green-soft);color:var(--green);font:700 1.3rem var(--display);text-align:center;padding:16px}
+.card.out img,.card.out .ph{filter:grayscale(1);opacity:.55}
+.card .body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:8px;flex:1}
+.card .row{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.card h3{font-size:1.1rem}
+.card .aka{font-size:.8rem;color:var(--muted);margin-top:-6px}
+.card .price{font:600 1.05rem var(--mono);font-variant-numeric:tabular-nums}
+.card .was{font:500 .8rem var(--mono);color:var(--muted);text-decoration:line-through}
+.card .row:last-child{margin-top:auto}
+@media (max-width:460px){.shop{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.card .body{padding:10px}}
+</style>
+</head>
+<body>
+
+
+<div class="gate" id="gate">
+  <form id="gateForm" autocomplete="off">
+    <span class="eyebrow">Friends &amp; family only</span>
+    <h2>Enter the passcode</h2>
+    <p class="note">Joey Meats is shared privately with friends and family. Ask Joey for the code.</p>
+    <label for="pass" class="note">Passcode</label>
+    <input id="pass" type="password" inputmode="text" autocapitalize="off" spellcheck="false" required>
+    <button class="btn" type="submit">Open</button>
+    <span class="err" id="gateErr" role="alert"></span>
+  </form>
+</div>
+
+<div class="wrap" id="site" hidden>
+  <header class="hero">
+    <span class="eyebrow">Pennsylvania-raised beef · Friends &amp; family</span>
+    <h1>Joey Meats</h1>
+    <p class="lede">Our own beef, processed locally, vacuum-sealed and frozen. Pick individual cuts below, or fill the freezer with a quarter.</p>
+    <div class="strip" aria-hidden="true"><img src="img/delmonico.jpg" alt=""><img src="img/porterhouse-tbone.jpg" alt=""><img src="img/brisket.jpg" alt=""><img src="img/short-ribs.jpg" alt=""></div>
+    <div class="tags"><span class="tag">Locally raised</span><span class="tag">Vacuum-sealed &amp; frozen</span><span class="tag">Local pickup</span></div>
+  </header>
+
+  <section id="cuts">
+    <span class="eyebrow">Cuts &amp; prices</span>
+    <h2>Individual cuts</h2>
+    <p class="lede">Real packages from this year's steer, vacuum-sealed by the processor. Availability changes, so reach out to see what's left.</p>
+    <div class="shop" id="invBody"></div>
+  </section>
+
+  <section id="quarter">
+    <div class="box">
+      <span class="eyebrow">The best deal</span>
+      <h2>What's actually in a quarter cow</h2>
+      <p>Our quarter is a steak-heavy box: about 105 lbs, with 42 steaks before you even get to the ground beef. It fills about 4–5 cubic feet of freezer. Here's what's in it, cut by cut.</p>
+      <div class="seg" role="group" aria-label="Share size">
+        <button type="button" data-s="0.5" aria-pressed="false">Eighth</button>
+        <button type="button" data-s="1" aria-pressed="true">Quarter</button>
+        <button type="button" data-s="2" aria-pressed="false">Half</button>
+      </div>
+      <div class="big">
+        <div><span class="n num" id="bPrice"></span><span class="l">for the whole share</span></div>
+        <div><span class="n num" id="bLbs"></span><span class="l">lbs of packaged beef</span></div>
+        <div><span class="n num" id="bSteaks"></span><span class="l">steaks</span></div>
+        <div><span class="n num" id="bBurgers"></span><span class="l">quarter-pound burgers' worth of ground beef</span></div>
+      </div>
+      <div class="cuts" id="cutGrid"></div>
+      <p class="meals" id="meals"></p>
+    </div>
+  </section>
+
+  <section id="compare">
+    <span class="eyebrow">Store vs. farm</span>
+    <h2>Same beef, grocery-store prices</h2>
+    <p class="lede">If you bought every cut in that share at today's average store prices, here's what it would cost.</p>
+    <div class="ledger">
+      <div class="bars">
+        <div class="bar"><span>Grocery store</span><div class="track"><div class="fill store" id="fStore"></div></div><span class="num" id="tStore"></span></div>
+        <div class="bar"><span>Our <span id="shareName">quarter</span></span><div class="track"><div class="fill farm" id="fFarm"></div></div><span class="num" id="tFarm"></span></div>
+      </div>
+      <div class="saving"><strong class="num" id="tSave"></strong><span id="tSavePct"></span></div>
+      <div class="tablebox" style="border:0">
+        <table class="inv cmp">
+          <thead><tr><th>Cut</th><th>Lbs</th><th>Store / lb</th><th>Store total</th></tr></thead>
+          <tbody id="cmpBody"></tbody>
+        </table>
+      </div>
+      <p class="src">Store prices: U.S. averages from <a href="https://usafacts.org/answers/what-is-the-price-of-beef/">BLS via USAFacts</a> (July 2026) and the <a href="https://www.ams.usda.gov/mnreports/AMS_3228.pdf">USDA grocery beef report</a> (Aug 2026). Cuts marked "est." have no national series and use typical retail. Yields vary by animal; final weight is set at the processor.</p>
+    </div>
+  </section>
+
+  <section id="contact" class="contact">
+    <span class="eyebrow">How to buy</span>
+    <h2>Text or call Joseph</h2>
+    <p class="lede">Tell me which cuts you want, or if you'd like an eighth, quarter, or half. I'll let you know what's available and set up a pickup.</p>
+    <p class="phone num" id="phone" hidden></p>
+  </section>
+</div>
+
+<script>
+/* ======= PASSCODE ======= */
+// SHA-256 of the passcode (lowercase). Current code: ask Joseph.
+const PASS_HASH = "aff0f313b5568afc194be9bfc378765a2be4f6dc804b80d226bc71dbc1d825f0";
+async function sha(t){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(t));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");}
+function unlock(){document.getElementById("gate").hidden=true;document.getElementById("site").hidden=false;}
+try{ if(localStorage.getItem("beefPass")===PASS_HASH) unlock(); }catch(e){}
+document.getElementById("gateForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const v=document.getElementById("pass").value.toLowerCase().replace(/\s+/g,"");
+  let h=""; try{h=await sha(v);}catch(err){}
+  if(h===PASS_HASH){ try{localStorage.setItem("beefPass",h);}catch(err){} unlock(); }
+  else { document.getElementById("gateErr").textContent="That code didn't match. Check with Joseph and try again."; document.getElementById("pass").select(); }
+});
+
+/* ======= EDIT THESE NUMBERS ======= */
+const PHONE = "";                  // e.g. "(304) 555-0123" — shown in the "Text or call" section
+const QUARTER_PRICE = 1000;        // flat price for a quarter (eighth = half this, half = double)
+const INVENTORY = [                // individual cuts for sale (store = typical grocery $/lb)
+  {cut:"Delmonico steak",  aka:"Ribeye",            img:"img/delmonico.jpg",        price:13.00, store:14.00},
+  {cut:"Porterhouse & T-bone", aka:"Strip + filet on the bone", img:"img/porterhouse-tbone.jpg", price:13.50, store:15.00},
+  {cut:"Filet",            aka:"Tenderloin / filet mignon", img:"img/filet.jpg",       price:22.00, store:26.00},
+  {cut:"Sirloin steak",    aka:"Bone-in sirloin",   img:"img/sirloin-steak.jpg",    price:10.00, store:14.59},
+  {cut:"Sirloin tip",      aka:"Great for kabobs or roasting", img:"img/sirloin-tip.jpg", price:8.50, store:9.50},
+  {cut:"Round steak",      aka:"Swiss steak, braising", img:"img/round-steak.jpg",  price:7.50,  store:8.50},
+  {cut:"Brisket",          aka:"Smoke it low and slow", img:"img/brisket.jpg",      price:8.00,  store:9.00},
+  {cut:"Short ribs",       aka:"Braise or smoke",   img:"img/short-ribs.jpg",       price:8.50,  store:10.00},
+  {cut:"Ground beef",      aka:"1 lb packs",        img:"",                         price:6.00,  store:6.89},
+];
+/* Quarter-cow breakdown (packaged lbs, store $/lb). est = no national price series */
+const QUARTER = [
+  {cut:"Delmonico (ribeye)",   lbs:10, steaks:13, store:14.00, est:false},
+  {cut:"Porterhouse & T-bone", lbs:9,  steaks:7,  store:15.00, est:true},
+  {cut:"Filet",                lbs:3,  steaks:6,  store:26.00, est:true},
+  {cut:"Sirloin steak",        lbs:9,  steaks:9,  store:14.59, est:false},
+  {cut:"Round steak",          lbs:7,  steaks:7,  store:8.50,  est:true},
+  {cut:"Sirloin tip",          lbs:6,  steaks:0,  store:9.50,  est:true},
+  {cut:"Brisket",              lbs:7,  steaks:0,  store:9.00,  est:true},
+  {cut:"Short ribs",           lbs:5,  steaks:0,  store:10.00, est:true},
+  {cut:"Roasts",               lbs:9,  steaks:0,  store:9.50,  est:true},
+  {cut:"Ground beef",          lbs:40, steaks:0,  store:6.89,  est:false},
+];
+/* ================================== */
+
+const $=id=>document.getElementById(id);
+const usd=n=>"$"+Math.round(n).toLocaleString();
+const usd2=n=>"$"+n.toFixed(2);
+let scale=1;
+const shareName=s=>({0.5:"eighth",1:"quarter",2:"half"})[s];
+
+function renderInv(){
+  $("invBody").innerHTML=INVENTORY.map((it,i)=>{
+    const pic=it.img?`<img src="${it.img}" alt="${it.cut}, vacuum-sealed package" loading="lazy" width="640" height="640">`:`<div class="ph">${it.cut}</div>`;
+    return `<article class="card">${pic}<div class="body">
+      <h3>${it.cut}</h3><span class="aka">${it.aka||""}</span>
+      <div class="row"><span><span class="price">${usd2(it.price)}</span><span class="note">/lb</span></span><span class="was" title="Typical grocery price">${usd2(it.store)}</span></div>
+    </div></article>`;
+  }).join("");
+}
+
+function renderShare(){
+  const rows=QUARTER.map(c=>({...c,lbs:c.lbs*scale,steaks:Math.round(c.steaks*scale)}));
+  const lbs=rows.reduce((a,c)=>a+c.lbs,0), steaks=rows.reduce((a,c)=>a+c.steaks,0);
+  const ground=rows.find(c=>c.cut==="Ground beef").lbs;
+  $("bLbs").textContent="~"+Math.round(lbs); $("bSteaks").textContent=steaks; $("bBurgers").textContent=Math.round(ground*4);
+  $("cutGrid").innerHTML=rows.map(c=>{
+    const dots=c.steaks?Array.from({length:c.steaks},()=>"<i></i>").join(""):Array.from({length:Math.min(60,Math.round(c.lbs))},()=>'<i class="lb"></i>').join("");
+    const lbl=c.steaks?`${c.steaks} steaks`:`${Math.round(c.lbs)} lbs`;
+    return `<div class="cutcard"><div class="top"><h3>${c.cut}</h3><span class="w">${lbl}</span></div><div class="dots" aria-hidden="true">${dots}</div>${c.steaks?`<small>${c.lbs.toFixed(1)} lbs total</small>`:`<small>each square = 1 lb</small>`}</div>`;
+  }).join("");
+  const dinners=Math.round(lbs/1.5);
+  $("meals").textContent=`That's roughly ${dinners} family dinners (at about 1½ lbs a meal), or a steak night every week for ${Math.round(steaks/2)} weeks for two people.`;
+  const store=rows.reduce((a,c)=>a+c.lbs*c.store,0), farm=QUARTER_PRICE*scale, perLb=farm/lbs;
+  $("bPrice").textContent=usd(farm);
+  $("compare").hidden = farm >= store;
+  $("tStore").textContent=usd(store); $("tFarm").textContent=usd(farm);
+  $("fStore").style.width="100%"; $("fFarm").style.width=(farm/store*100).toFixed(1)+"%";
+  $("tSave").textContent="You save "+usd(store-farm);
+  $("tSavePct").textContent=`${Math.round((1-farm/store)*100)}% under store prices · about ${usd2(perLb)}/lb for everything, steaks included`;
+  $("shareName").textContent=shareName(scale);
+  $("cmpBody").innerHTML=rows.map(c=>`<tr><td class="cut">${c.cut}</td><td class="num">${c.lbs.toFixed(1)}</td><td class="num">${usd2(c.store)}${c.est?' <span class="src">est.</span>':""}</td><td class="num">${usd(c.lbs*c.store)}</td></tr>`).join("")
+    +`<tr><td class="cut">Our ${shareName(scale)}</td><td class="num">${lbs.toFixed(1)}</td><td class="num win">${usd2(perLb)}</td><td class="num win">${usd(farm)}</td></tr>`;
+}
+document.querySelectorAll(".seg button").forEach(b=>b.addEventListener("click",()=>{
+  scale=+b.dataset.s; document.querySelectorAll(".seg button").forEach(x=>x.setAttribute("aria-pressed",x===b)); renderShare();
+}));
+if(PHONE){$("phone").textContent=PHONE;$("phone").hidden=false;}
+renderInv(); renderShare();
+</script>
+
+</body>
+</html>
