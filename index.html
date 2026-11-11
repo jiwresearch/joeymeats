@@ -205,7 +205,13 @@ section{display:flex;flex-direction:column;gap:18px}
 /* ======= PASSCODE ======= */
 // SHA-256 of the passcode (lowercase). Current code: ask Joseph.
 const PASS_HASH = "aff0f313b5568afc194be9bfc378765a2be4f6dc804b80d226bc71dbc1d825f0";
-async function sha(t){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(t));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");}
+function sha256js(str){const K=[],H=[];let n=2,c=0;const fr=x=>(x-Math.floor(x))*4294967296|0;while(c<64){let p=1;for(let i=2;i*i<=n;i++)if(n%i===0){p=0;break}if(p){if(c<8)H[c]=fr(Math.pow(n,1/2));K[c++]=fr(Math.pow(n,1/3))}n++}
+const b=unescape(encodeURIComponent(str)),l=b.length,w=[];for(let i=0;i<l;i++)w[i>>2]|=b.charCodeAt(i)<<(24-(i%4)*8);w[l>>2]|=0x80<<(24-(l%4)*8);w[((l+8>>6)<<4)+15]=l*8;
+const r=(x,y)=>(x>>>y)|(x<<(32-y));const h=H.slice();for(let j=0;j<w.length;j+=16){const W=[];let [a,bb,cc,d,e,f,g,hh]=h;for(let i=0;i<64;i++){if(i<16)W[i]=w[j+i]|0;else{const s0=r(W[i-15],7)^r(W[i-15],18)^(W[i-15]>>>3),s1=r(W[i-2],17)^r(W[i-2],19)^(W[i-2]>>>10);W[i]=(W[i-16]+s0+W[i-7]+s1)|0}
+const t1=(hh+(r(e,6)^r(e,11)^r(e,25))+((e&f)^(~e&g))+K[i]+W[i])|0,t2=((r(a,2)^r(a,13)^r(a,22))+((a&bb)^(a&cc)^(bb&cc)))|0;hh=g;g=f;f=e;e=(d+t1)|0;d=cc;cc=bb;bb=a;a=(t1+t2)|0}
+h[0]=(h[0]+a)|0;h[1]=(h[1]+bb)|0;h[2]=(h[2]+cc)|0;h[3]=(h[3]+d)|0;h[4]=(h[4]+e)|0;h[5]=(h[5]+f)|0;h[6]=(h[6]+g)|0;h[7]=(h[7]+hh)|0}
+return h.map(x=>(x>>>0).toString(16).padStart(8,"0")).join("")}
+async function sha(t){try{if(window.crypto&&crypto.subtle){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(t));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");}}catch(e){}return sha256js(t);}
 function unlock(){document.getElementById("gate").hidden=true;document.getElementById("site").hidden=false;}
 try{ if(localStorage.getItem("beefPass")===PASS_HASH) unlock(); }catch(e){}
 document.getElementById("gateForm").addEventListener("submit",async e=>{
